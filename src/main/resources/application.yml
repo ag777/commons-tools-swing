@@ -1,0 +1,17 @@
+ui:
+  title: 通用工具
+  base-config:
+    font:
+      # 是否粗体
+      bold: false
+      # 文字大小
+      text-size: 14
+  menu:
+    items:
+      - name: 空
+        path: EmptyPanel
+
+logging:
+  level:
+    github.ag777.common.tool: debug
+    org.springframework: warn

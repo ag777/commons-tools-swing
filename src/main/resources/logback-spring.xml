@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+
+    <!-- 变量配置 -->
+    <property name="LOG_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{30} Line:%line -> %msg%n"/>
+    <property name="LOG_PATTERN_SIMPLE" value="%d{HH:mm:ss.SSS} %-5level %msg%n"/>
+    <property name="LOG_PATTERN_SIMPLE_MSG" value="%d{HH:mm:ss.SSS} %msg%n"/>
+    <property name="LOG_PATTERN_TIMER" value="%d{HH:mm:ss.SSS} %-5level %logger{1} %msg%n"/>
+    <property name="LOG_PATTERN_REQUEST" value="%d{HH:mm:ss.SSS} %msg%n"/>
+    <property name="LOG_PATTERN_TIMER" value="%d{HH:mm:ss.SSS} %-5level %logger{1} %msg%n" />
+    <springProperty scope="context" name="CHARSET" source="log.charset"/>
+    <!-- 在部署到tomcat容器后，日志在tomcat目录中的bin/logs下 -->
+    <!--<property name="LOG_HOME" value="./logs/"/>-->
+    <springProperty scope="context" name="LOG_HOME" source="log.path"/>
+    <property name="FILE_NAME" value="app"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 对日志进行格式化 -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>${CHARSET}</charset>
+            <pattern>${LOG_PATTERN_SIMPLE}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- RollingFileAppender：滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件 -->
+    <!-- 1.先按日期存日志，日期变了，将前一天的日志文件名重命名为XXX%日期%索引，新的日志仍然是demo.log -->
+    <!-- 2.如果日期没有发生变化，但是当前日志的文件大小超过1KB时，对当前日志进行分割 重命名-->
+    <appender name="ALL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${FILE_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${FILE_NAME}_%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>3</maxHistory>
+            <!-- 总的日志文件大小上限为 30MB -->
+            <totalSizeCap>30MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>${CHARSET}</charset>
+            <Pattern>${LOG_PATTERN}</Pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- 其他的Logger配置类似，可以根据需要继续添加 -->
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ALL_FILE"/>
+    </root>
+
+</configuration>
