@@ -1,5 +1,9 @@
 ui:
   title: 通用工具
+  colors:
+    primary: '#1677FF'
+    success: '#52C41A'
+    error: '#FF4D4F'
   base-ui-config:
     font:
       # 是否粗体

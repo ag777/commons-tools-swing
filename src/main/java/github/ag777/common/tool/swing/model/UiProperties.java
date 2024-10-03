@@ -1,5 +1,7 @@
 package github.ag777.common.tool.swing.model;
 
+import com.ag777.util.lang.StringUtils;
+import github.ag777.common.tool.swing.util.awt.ColorUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -21,6 +23,7 @@ import java.util.Map;
 public class UiProperties {
     // 标题
     private String title;
+    private Colors colors;
     // 基础ui配置
     private UiConfig baseUiConfig;
     // 菜单项
@@ -28,6 +31,16 @@ public class UiProperties {
 
     @PostConstruct
     public void init() {
+        if (!StringUtils.isEmpty(colors.getPrimary())) {
+            Theme.COLOR_PRIMARY = ColorUtils.toColor(colors.getPrimary());
+        }
+        if (!StringUtils.isEmpty(colors.getSuccess())) {
+            Theme.COLOR_SUCCESS = ColorUtils.toColor(colors.getSuccess());
+        }
+        if (!StringUtils.isEmpty(colors.getError())) {
+            Theme.COLOR_ERROR = ColorUtils.toColor(colors.getError());
+        }
+
         if (menu != null) {
             if (menu.getUiConfig() != null) {
                 menu.setUiConfig(baseUiConfig);
@@ -41,6 +54,13 @@ public class UiProperties {
             }
         }
 
+    }
+
+    @Data
+    public static class Colors {
+        private String primary;
+        private String success;
+        private String error;
     }
 
     @Data

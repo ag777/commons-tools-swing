@@ -1,5 +1,6 @@
 package github.ag777.common.tool.swing.view.component;
 
+import github.ag777.common.tool.swing.model.Theme;
 import lombok.Setter;
 
 import javax.swing.*;
@@ -22,24 +23,17 @@ public class MyProgressBar extends JProgressBar {
     @Setter
     private volatile Status status;
 
-    @Setter
-    private Color colorRunning = new Color(22,119,255);
-    @Setter
-    private Color colorComplete = new Color(82, 196, 26);
-    @Setter
-    private Color colorError = new Color(255, 77, 79);
-
     public MyProgressBar() {
         super();
         status = Status.RUNNING;
         colorGenerator = info->
             switch (status) {
                 case RUNNING:
-                    yield colorRunning;
+                    yield Theme.COLOR_PRIMARY;
                 case COMPLETE:
-                    yield colorComplete;
+                    yield Theme.COLOR_SUCCESS;
                 case ERROR:
-                    yield colorError;
+                    yield Theme.COLOR_ERROR;
             };
 
         addMouseListener(new MouseAdapter() {
