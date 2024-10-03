@@ -1,6 +1,6 @@
 package github.ag777.common.tool.swing.view.component;
 
-import github.ag777.common.tool.swing.util.ui.BorderLayoutHelper;
+import github.ag777.common.tool.swing.util.ui.layout.BorderLayoutHelper;
 import github.ag777.common.tool.swing.util.ui.BorderUtils;
 import github.ag777.common.tool.swing.util.ui.ScrollPaneUtils;
 import lombok.Getter;

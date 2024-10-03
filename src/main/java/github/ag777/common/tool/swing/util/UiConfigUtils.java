@@ -22,7 +22,7 @@ public class UiConfigUtils {
         int textSize = fontConfig.getTextSize();
         boolean bold = fontConfig.isBold();
 
-        Font font = new Font(java.awt.Font.DIALOG, bold? java.awt.Font.BOLD: java.awt.Font.PLAIN, textSize);
+        Font font = new Font(Font.DIALOG, bold? Font.BOLD: Font.PLAIN, textSize);
         component.setFont(font);
     }
 

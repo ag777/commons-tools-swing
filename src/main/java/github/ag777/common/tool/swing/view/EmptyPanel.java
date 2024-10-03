@@ -5,8 +5,8 @@ import github.ag777.common.tool.swing.base.BasePresenter;
 import github.ag777.common.tool.swing.model.UiProperties;
 import github.ag777.common.tool.swing.presenter.EmptyPresenter;
 import github.ag777.common.tool.swing.view.component.OutputArea;
-import github.ag777.common.tool.swing.util.ui.BorderLayoutHelper;
-import github.ag777.common.tool.swing.util.ui.GridBagLayoutHelper;
+import github.ag777.common.tool.swing.util.ui.layout.BorderLayoutHelper;
+import github.ag777.common.tool.swing.util.ui.layout.GridBagLayoutHelper;
 import github.ag777.common.tool.swing.view.interf.EmptyView;
 
 import javax.swing.*;

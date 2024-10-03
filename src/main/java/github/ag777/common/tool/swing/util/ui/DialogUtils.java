@@ -1,6 +1,8 @@
 package github.ag777.common.tool.swing.util.ui;
 
 import github.ag777.common.tool.swing.util.awt.ClipboardUtils;
+import github.ag777.common.tool.swing.util.ui.layout.BorderLayoutHelper;
+import github.ag777.common.tool.swing.util.ui.layout.GridBagLayoutHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,19 +18,29 @@ import java.util.function.Predicate;
 public class DialogUtils {
 
 	private DialogUtils(){}
-	
+
 	/**
-	 * 显示消息对话框
-	 * 该方法用于向用户显示一个带有警告图标的消息对话框，对话框的标题和内容可以通过参数进行设置
+	 * 显示一个带有标题和内容的消息对话框
+	 * 该对话框主要用于向用户显示一般的提示信息
 	 *
-	 * @param parentComponent 作为对话框父组件的GUI组件，通常用于确定对话框的位置和所有权
-	 * @param title 对话框的标题，用来简要说明对话框的主题或内容
-	 * @param content 对话框中要显示的具体内容，可以是警告信息或其他需要通知用户的信息
+	 * @param parentComponent 父组件，用于确定消息对话框的显示位置
+	 * @param title 对话框的标题
+	 * @param content 对话框的内容
 	 */
-	public static void showMsgDialog(Component parentComponent, String title, String content){
-	    // 使用JOptionPane类的showMessageDialog方法显示一个消息对话框
-	    // 参数包括父组件、要显示的内容、对话框的标题以及消息类型（这里使用WARNING_MESSAGE表示警告信息）
-	    JOptionPane.showMessageDialog(parentComponent, content, title, JOptionPane.WARNING_MESSAGE);
+	public static void showPlainDialog(Component parentComponent, String title, String content){
+	    JOptionPane.showMessageDialog(parentComponent, content, title, JOptionPane.PLAIN_MESSAGE);
+	}
+
+	/**
+	 * 显示一个带有标题和内容的 informational 消息对话框
+	 * 该对话框主要用于向用户显示信息性的提示，比如操作成功等
+	 *
+	 * @param parentComponent 父组件，用于确定消息对话框的显示位置
+	 * @param title 对话框的标题
+	 * @param content 对话框的内容
+	 */
+	public static void showInfoDialog(Component parentComponent, String title, String content){
+	    JOptionPane.showMessageDialog(parentComponent, content, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	/**
@@ -72,7 +84,7 @@ public class DialogUtils {
 	 * @param msgMap 消息映射，包含要显示的信息的键值对
 	 * @param size 对话框尺寸，确定对话框的大小
 	 */
-	public static void showMsgDialog(JFrame parentComponent, String title, Map<String, String> msgMap, Dimension size) {
+	public static void showDialog(JFrame parentComponent, String title, Map<String, String> msgMap, Dimension size) {
 	    // 创建一个模态对话框，用户必须关闭此对话框才能与父组件交互
 	    JDialog jd = new JDialog(parentComponent, title, true);
 	    // 获取对话框的内容面板
@@ -99,7 +111,7 @@ public class DialogUtils {
 	 * @param content 对话框的内容面板
 	 * @param size 对话框的尺寸，包括宽度和高度
 	 */
-	public static void showMsgDialog(JFrame parentComponent, String title, JPanel content, Dimension size) {
+	public static void showDialog(JFrame parentComponent, String title, JPanel content, Dimension size) {
 	    // 创建一个模态对话框，模态意味着用户必须关闭此对话框才能与父组件交互
 	    JDialog jd = new JDialog(parentComponent, title, true);
 
@@ -153,7 +165,7 @@ public class DialogUtils {
         // 为复制按钮添加动作监听器，当点击时复制路径到剪贴板
         b_copy.addActionListener(e->{
             ClipboardUtils.copyTextToClipboard(tf_filePath.getText().trim());
-            DialogUtils.showMsgDialog(parentComponent, "系统提示", "已经复制到剪贴板");
+            DialogUtils.showInfoDialog(parentComponent, "系统提示", "已经复制到剪贴板");
         });
 
         // 创建按钮组面板

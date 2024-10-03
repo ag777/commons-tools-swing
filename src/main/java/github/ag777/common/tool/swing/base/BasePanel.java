@@ -17,8 +17,13 @@ public abstract class BasePanel extends LoadingComponent<JPanel> {
 
 	public BasePanel(UiProperties.UiConfig uiConfig){
 		super(new JPanel());
-		initView(component, uiConfig);
-		initData();
+		setLoading(true);
+		try {
+			initView(component, uiConfig);
+			initData();
+		} finally {
+			setLoading(false);
+		}
 	}
 
 	/**

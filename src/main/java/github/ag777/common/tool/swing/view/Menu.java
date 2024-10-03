@@ -107,7 +107,7 @@ public class Menu extends JMenuBar implements ActionListener {
 		panel_help.add(basic);
 
 
-		DialogUtils.showMsgDialog(mContainer, "帮助", panel_help,new Dimension(600, 240));
+		DialogUtils.showDialog(mContainer, "帮助", panel_help,new Dimension(600, 240));
 	}
 	
 
@@ -119,7 +119,7 @@ public class Menu extends JMenuBar implements ActionListener {
 		map.put("编译环境", "JDK 21.0.2");
 		map.put("作者", "ag777");
 
-		DialogUtils.showMsgDialog(mContainer, "关于", map, new Dimension(150, 120));
+		DialogUtils.showDialog(mContainer, "关于", map, new Dimension(150, 120));
 	}
 
 	public Optional<BasePanel> getFirstPanel() {
