@@ -19,7 +19,7 @@ public class GridBagLayoutHelper<T extends Container> {
 		return new GridBagLayoutHelper<>(container);
 	}
 	
-	private GridBagLayoutHelper(T container){
+	public GridBagLayoutHelper(T container){
 		mContainer = container;
 		
 		gr = new GridBagLayout();
