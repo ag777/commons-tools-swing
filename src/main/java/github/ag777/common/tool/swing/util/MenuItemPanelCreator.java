@@ -19,7 +19,7 @@ public class MenuItemPanelCreator {
             if (clazz.isAssignableFrom(BasePanel.class)) {
                 throw new ValidateException("目标类必须是JPanel的子类或实现类，当前类: " + clazz.getName());
             }
-            return (BasePanel) clazz.getConstructor(UiProperties.UiConfig.class).newInstance(config.getConfig());
+            return (BasePanel) clazz.getConstructor(UiProperties.MenuItem.class).newInstance(config);
         } catch (ClassNotFoundException e) {
             throw new ValidateException("没有找到对应类：" + classPath, e);
         } catch (InstantiationException e) {

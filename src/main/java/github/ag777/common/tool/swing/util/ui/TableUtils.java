@@ -3,7 +3,10 @@ package github.ag777.common.tool.swing.util.ui;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,11 +65,72 @@ public class TableUtils {
         });
     }
 
+    /**
+     * 设置JTable的各列宽度
+     * @param table JTable实例
+     * @param widths 列宽度数组，-1表示该列宽度自动计算
+     */
+    public static void setTableWidths(JTable table, int[] widths) {
+        // 调用autoWidths方法设置表格列宽
+        autoWidths(table, widths);
+
+        // 如果需要的话，可以添加一个组件大小改变监听器来动态更新列宽
+        table.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                // 当组件大小改变时，重新计算并设置列宽
+                autoWidths(table, widths);
+            }
+        });
+    }
+
+    /**
+     * 自动计算并设置表格的列宽度
+     * @param table JTable实例
+     * @param widths 列宽度数组，-1表示该列宽度自动计算
+     */
+     private static void autoWidths(JTable table, int[] widths) {
+       // 获取表格的列模型
+       TableColumnModel columnModel = table.getColumnModel();
+
+       int numAutoColumns = 0; // 需要自动调整宽度的列数
+       int totalFixedWidth = 0; // 所有固定宽度的列的总宽度
+       int numColumns = columnModel.getColumnCount(); // 总列数
+       int[] specifiedWidths = new int[numColumns]; // 存储指定的宽度
+
+       // 初始化指定宽度数组
+       for (int i = 0; i < numColumns; i++) {
+           specifiedWidths[i] = (widths.length > i) ? widths[i] : -1;
+
+           if (specifiedWidths[i] == -1) {
+               numAutoColumns++; // 计算需要自动调整宽度的列数
+           } else {
+               totalFixedWidth += specifiedWidths[i]; // 计算所有非自动调整宽度的列的总宽度
+           }
+       }
+
+       // 计算剩余宽度，用于自动调整宽度的列
+       int remainingWidth = table.getWidth() - totalFixedWidth;
+       int autoWidth = (numAutoColumns == 0) ? 0 : remainingWidth / numAutoColumns;
+
+       // 设置列宽度
+       for (int i = 0; i < numColumns; i++) {
+           if (specifiedWidths[i] == -1) {
+               // 对于需要自动调整宽度的列，设置其首选宽度为计算得到的autoWidth
+               columnModel.getColumn(i).setPreferredWidth(autoWidth);
+           } else {
+               // 对于有指定宽度的列，设置其首选宽度为指定的宽度
+               columnModel.getColumn(i).setPreferredWidth(specifiedWidths[i]);
+           }
+       }
+   }
+
+
     @FunctionalInterface
     public interface CellBuilder {
         Component accept(JTable table, Object value,
-                                                boolean isSelected, Boolean hasFocus,
-                                                int row, int column, boolean isRender);
+                boolean isSelected, Boolean hasFocus,
+                int row, int column, boolean isRender);
     }
 
 }

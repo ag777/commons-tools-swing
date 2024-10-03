@@ -15,12 +15,12 @@ public abstract class BasePanel extends LoadingComponent<JPanel> {
 	@Serial
 	private static final long serialVersionUID = -4818485273815570584L;
 
-	public BasePanel(UiProperties.UiConfig uiConfig){
+	public BasePanel(UiProperties.MenuItem config){
 		super(new JPanel());
 		setLoading(true);
 		try {
-			initView(component, uiConfig);
-			initData();
+			initView(component, config);
+			initData(config);
 		} finally {
 			setLoading(false);
 		}
@@ -39,9 +39,9 @@ public abstract class BasePanel extends LoadingComponent<JPanel> {
 		}
 	}
 
-	protected abstract void initView(JPanel container, UiProperties.UiConfig uiConfig);		//初始化视图
+	protected abstract void initView(JPanel container, UiProperties.MenuItem config);		//初始化视图
 
-	protected abstract void initData();		//初始化事件/数据
+	protected abstract void initData(UiProperties.MenuItem config);		//初始化事件/数据
 
 	public abstract BasePresenter<?> getPresenter();
 	

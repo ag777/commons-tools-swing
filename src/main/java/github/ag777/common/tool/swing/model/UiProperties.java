@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -21,20 +22,20 @@ public class UiProperties {
     // 标题
     private String title;
     // 基础ui配置
-    private UiConfig baseConfig;
+    private UiConfig baseUiConfig;
     // 菜单项
     private Menu menu = new Menu();
 
     @PostConstruct
     public void init() {
         if (menu != null) {
-            if (menu.getConfig() != null) {
-                menu.setConfig(baseConfig);
+            if (menu.getUiConfig() != null) {
+                menu.setUiConfig(baseUiConfig);
             }
             if (menu.items != null) {
                 for (MenuItem item : menu.items) {
-                    if (item.getConfig() == null) {
-                        item.setConfig(baseConfig); // 设置默认值
+                    if (item.getUiConfig() == null) {
+                        item.setUiConfig(baseUiConfig); // 设置默认值
                     }
                 }
             }
@@ -44,7 +45,7 @@ public class UiProperties {
 
     @Data
     public static class Menu {
-        private UiConfig config = new UiConfig();
+        private UiConfig uiConfig = new UiConfig();
         private List<MenuItem> items = Collections.emptyList();
     }
 
@@ -52,7 +53,8 @@ public class UiProperties {
     public static class MenuItem {
         private String name;
         private String path;
-        private UiConfig config;
+        private UiConfig uiConfig;
+        private Map<String, Object> params = Collections.emptyMap();
     }
 
     @Data

@@ -50,7 +50,7 @@ public class Menu extends JMenuBar implements ActionListener {
 		mContainer = mainFrame;
 		menuItemConfigMap = new HashMap<>(config.getItems().size());
 
-		initView(config.getConfig(), config.getItems());
+		initView(config.getUiConfig(), config.getItems());
 		
 		initData();
 	}

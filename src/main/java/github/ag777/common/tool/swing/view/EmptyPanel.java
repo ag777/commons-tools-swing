@@ -4,9 +4,9 @@ import github.ag777.common.tool.swing.base.BasePanel;
 import github.ag777.common.tool.swing.base.BasePresenter;
 import github.ag777.common.tool.swing.model.UiProperties;
 import github.ag777.common.tool.swing.presenter.EmptyPresenter;
-import github.ag777.common.tool.swing.view.component.OutputArea;
 import github.ag777.common.tool.swing.util.ui.layout.BorderLayoutHelper;
 import github.ag777.common.tool.swing.util.ui.layout.GridBagLayoutHelper;
+import github.ag777.common.tool.swing.view.component.OutputArea;
 import github.ag777.common.tool.swing.view.interf.EmptyView;
 
 import javax.swing.*;
@@ -20,8 +20,8 @@ public class EmptyPanel extends BasePanel implements EmptyView {
     private JButton btnClear;
     private OutputArea outputArea;
 
-    public EmptyPanel(UiProperties.UiConfig uiConfig) {
-        super(uiConfig);
+    public EmptyPanel(UiProperties.MenuItem config) {
+        super(config);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class EmptyPanel extends BasePanel implements EmptyView {
     }
 
     @Override
-    protected void initView(JPanel container, UiProperties.UiConfig uiConfig) {
+    protected void initView(JPanel container, UiProperties.MenuItem config) {
         //输出框组
         outputArea = new OutputArea()
                 .setMaxLineCount(100);
@@ -47,7 +47,7 @@ public class EmptyPanel extends BasePanel implements EmptyView {
     }
 
     @Override
-    protected void initData() {
+    protected void initData(UiProperties.MenuItem config) {
         mPresenter = new EmptyPresenter();
         mPresenter.attachView(this);
 

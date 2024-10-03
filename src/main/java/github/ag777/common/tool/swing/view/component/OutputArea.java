@@ -1,8 +1,8 @@
 package github.ag777.common.tool.swing.view.component;
 
-import github.ag777.common.tool.swing.util.ui.layout.BorderLayoutHelper;
 import github.ag777.common.tool.swing.util.ui.BorderUtils;
 import github.ag777.common.tool.swing.util.ui.ScrollPaneUtils;
+import github.ag777.common.tool.swing.util.ui.layout.BorderLayoutHelper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -35,13 +35,13 @@ public class OutputArea extends JPanel{
     public OutputArea() {
         textArea = new JTextArea();
         initTextarea();
-        JScrollPane scrollPane = ScrollPaneUtils.wrap(textArea, "输出");
+        JScrollPane scrollPane = ScrollPaneUtils.wrap(textArea);
         progressBar = new MyProgressBar();
         this.alwaysShowProgressBar = false;
         initProgressBar();
 
         BorderLayoutHelper.newInstance(this)
-                .addComponent2Center(scrollPane)
+                .addComponent2Center(BorderUtils.title(scrollPane, "输出"))
                 .addComponent2South(progressBar);
     }
 
@@ -130,7 +130,7 @@ public class OutputArea extends JPanel{
     }
 
     public OutputArea setTitle(String title) {
-        BorderUtils.titleBorder(textArea, title);
+        BorderUtils.title(textArea, title);
         return this;
     }
 
