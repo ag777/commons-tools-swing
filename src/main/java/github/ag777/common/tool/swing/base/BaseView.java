@@ -6,5 +6,5 @@ package github.ag777.common.tool.swing.base;
  *
  */
 public interface BaseView {
-
+    void showErr(String errMsg);
 }

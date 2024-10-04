@@ -1,14 +1,9 @@
 package github.ag777.common.tool.swing.util.ui;
 
-import github.ag777.common.tool.swing.util.awt.ClipboardUtils;
-import github.ag777.common.tool.swing.util.ui.layout.BorderLayoutHelper;
-import github.ag777.common.tool.swing.util.ui.layout.GridBagLayoutHelper;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * 弹窗工具类
@@ -130,78 +125,4 @@ public class DialogUtils {
 	    // 将对话框显示在屏幕中央
 	    ViewUtils.showInCenter(jd);
 	}
-	
-    /**
-     * 显示一个文件选择对话框，允许用户输入一个文件路径，并提供复制和保存操作
-     * 此对话框用于让用户确认和选择文件路径，并提供了复制路径到剪贴板以及保存路径的功能
-     *
-     * @param parentComponent 调用此对话框的父组件，用于定位对话框位置
-     * @param curPath 当前文件路径，用作输入提示
-     * @param onInput 输入验证回调，用于验证用户输入的路径是否有效
-     * @param onSuccess 成功回调，当用户点击保存时调用，传递用户输入的路径
-     */
-    public static void showFileChooserDialog(JFrame parentComponent, String curPath,  Predicate<String> onInput, Consumer<String> onSuccess) {
-        // 创建一个模态对话框
-        final JDialog dialog = new JDialog(parentComponent, "提示", false);
-        // 设置对话框的宽高
-        dialog.setSize(450, 80);
-        // 设置对话框大小不可改变
-        dialog.setResizable(false);
-        // 设置对话框相对显示的位置
-        dialog.setLocationRelativeTo(parentComponent);
-
-        // 创建一个标签显示消息内容
-        JPanel panel_filePath = new JPanel();
-        // 使用FilePicker工具类创建一个文件路径输入字段，并应用验证回调
-        JTextField tf_filePath = FilePicker.chooseDirInput(parentComponent, curPath, curPath, onInput);
-        // 创建一个按钮用于复制文件路径到剪贴板
-        JButton b_copy = new JButton("复制");
-        // 使用BorderLayout布局管理器布局文件路径输入面板
-        BorderLayoutHelper.newInstance(panel_filePath)
-            .addComponent(new JLabel("工程WebRoot路径: "), BorderLayout.WEST)
-            .addComponent(tf_filePath, BorderLayout.CENTER)
-            .addComponent(b_copy, BorderLayout.EAST);
-
-        // 为复制按钮添加动作监听器，当点击时复制路径到剪贴板
-        b_copy.addActionListener(e->{
-            ClipboardUtils.copyTextToClipboard(tf_filePath.getText().trim());
-            DialogUtils.showInfoDialog(parentComponent, "系统提示", "已经复制到剪贴板");
-        });
-
-        // 创建按钮组面板
-        JPanel panel_btnGroup = new JPanel();
-        // 创建一个按钮用于关闭对话框并提交路径
-        JButton okBtn = new JButton("保存");
-        // 为保存按钮添加动作监听器，当点击时调用成功回调并关闭对话框
-        okBtn.addActionListener(e->{
-            onSuccess.accept(tf_filePath.getText().trim());
-            dialog.dispose();
-        });
-
-        // 创建一个按钮用于取消操作并关闭对话框
-        JButton cancelBtn = new JButton("取消");
-        // 为取消按钮添加动作监听器，当点击时关闭对话框
-        cancelBtn.addActionListener(e->{
-            dialog.dispose();
-        });
-
-        // 使用GridBagLayout布局管理器布局按钮组面板
-        GridBagLayoutHelper.newInstance(panel_btnGroup)
-            .addComponent(okBtn, 0, 0)
-            .addComponent(cancelBtn, 0, 1);
-
-        // 创建对话框的内容面板, 在面板内可以根据自己的需要添加任何组件并做任意是布局
-        JPanel panel = new JPanel();
-        // 设置内容面板的布局为BorderLayout
-        panel.setLayout(new BorderLayout());
-        // 在内容面板中心区域添加文件路径输入面板
-        panel.add(panel_filePath,BorderLayout.CENTER);
-        // 在内容面板南边区域添加按钮组面板
-        panel.add(panel_btnGroup,BorderLayout.SOUTH);
-        
-        // 设置对话框的内容面板
-        dialog.setContentPane(panel);
-        // 显示对话框
-        dialog.setVisible(true);
-    }
 }

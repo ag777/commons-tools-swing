@@ -13,8 +13,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
-import java.awt.*;
-import java.text.DecimalFormat;
 import java.util.function.Function;
 
 /**
@@ -86,17 +84,8 @@ public class OutputArea extends JPanel{
     }
 
     private void initProgressBar() {
-        progressBar.setPreferredSize(new Dimension(0, 20));
+        progressBar.setHeight(20);
         progressBar.setVisible(false);
-        progressBar.setStringPainted(true);
-        DecimalFormat percentFormat = new DecimalFormat("0%");
-        progressBar.setTextFormatter((info)-> {
-            if (info.hover()) {
-                return info.value()+"/"+info.max();
-            } else {
-                return percentFormat.format(info.progress());
-            }
-        });
 
         // 添加变更监听器
         progressBar.addChangeListener(e -> {

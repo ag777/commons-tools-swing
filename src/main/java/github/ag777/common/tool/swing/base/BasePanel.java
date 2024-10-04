@@ -2,11 +2,16 @@ package github.ag777.common.tool.swing.base;
 
 
 import github.ag777.common.tool.swing.model.UiProperties;
+import github.ag777.common.tool.swing.util.ui.DialogUtils;
+import github.ag777.common.tool.swing.util.ui.Toast;
 import github.ag777.common.tool.swing.view.component.loading.LoadingComponent;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.io.Serial;
+import java.util.function.Consumer;
 
+@Slf4j
 public abstract class BasePanel extends LoadingComponent<JPanel> {
 
 	/**
@@ -58,6 +63,88 @@ public abstract class BasePanel extends LoadingComponent<JPanel> {
 	}
 
 	/**
+	 * 调用业务演示层对象的方法，并处理可能的异常
+	 *
+	 * @param action 一个CallPresenter接口实例，用于调用业务演示层的方法
+	 * @param onCancel 当方法执行被中断时的回调，接收一个InterruptedException参数
+	 */
+	public void callPresenter(CallPresenter action, Consumer<InterruptedException> onCancel) {
+	    // 获取当前业务演示层对象
+	    BasePresenter<?> mPresenter = getPresenter();
+	    if(mPresenter != null) {
+	        // 设置正在加载状态为true，表示开始进行某种操作
+	        setLoading(true);
+	        try {
+	            // 执行传入的业务演示层方法
+	            action.call();
+	        } catch(InterruptedException e) {
+	            // 当方法执行被中断时，记录日志并执行取消回调
+	            log.debug("业务被中断");
+	            if (onCancel != null) {
+	                onCancel.accept(e);
+	            }
+	        } catch (Exception e) {
+	            // 捕获其他异常，记录异常信息并显示错误
+	            log.debug(e.getMessage(), e);
+	            showErr(e.getMessage());
+	        } finally {
+	            // 无论结果如何，最后确保将加载状态设置为false
+	            setLoading(false);
+	        }
+	    }
+	}
+
+	/**
+	 * 显示错误对话框
+	 *
+	 * @param errMsg 错误消息文本
+	 * 当遇到错误需要提示用户时，此方法使用DialogUtils显示一个警告对话框
+	 * 该对话框标题为"错误"，并显示传入的错误消息
+	 */
+	public void showErr(String errMsg) {
+	    DialogUtils.showWarningDialog(this, "错误", errMsg);
+	}
+
+	/**
+	 * 显示普通的提示信息
+	 *
+	 * @param msg 提示信息的内容
+	 * @param duration 提示信息显示的持续时间，以毫秒为单位
+	 */
+	public void toastNormal(String msg, int duration) {
+		showToast(Toast.normal(getFrame(), msg, duration));
+	}
+
+	/**
+	 * 显示成功的提示信息
+	 *
+	 * @param msg 提示信息的内容
+	 * @param duration 提示信息显示的持续时间，以毫秒为单位
+	 */
+	public void toastSuccess(String msg, int duration) {
+		showToast(Toast.success(getFrame(), msg, duration));
+	}
+
+	/**
+	 * 显示错误的提示信息
+	 *
+	 * @param msg 提示信息的内容
+	 * @param duration 提示信息显示的持续时间，以毫秒为单位
+	 */
+	public void toastError(String msg, int duration) {
+		showToast(Toast.error(getFrame(), msg, duration));
+	}
+
+	/**
+	 * 显示给定的提示信息
+	 *
+	 * @param toast 要显示的提示信息对象
+	 */
+	protected void showToast(Toast toast) {
+		toast.showInCenter();
+	}
+
+	/**
 	 * 初始化视图，需要由子类实现
 	 *
 	 * @param container 包含视图的JPanel容器
@@ -81,5 +168,10 @@ public abstract class BasePanel extends LoadingComponent<JPanel> {
 	 * 此方法用于返回负责组件业务逻辑处理的Presenter实例，以便进行MVC模式下的逻辑处理
 	 */
 	public abstract BasePresenter<?> getPresenter();
-	
+
+	@FunctionalInterface
+	public interface CallPresenter {
+	    void call() throws Exception;
+	}
+
 }

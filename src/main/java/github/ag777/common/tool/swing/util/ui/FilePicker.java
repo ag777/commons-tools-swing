@@ -4,12 +4,11 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
-import java.util.function.Predicate;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class FilePicker {
 
@@ -57,93 +56,77 @@ public class FilePicker {
 	    // 用户选择的路径或文件
 	    return jfc.getSelectedFile();
 	}
-	
-	/**
-	 * 创建一个绑定到特定路径的文本输入框，专门用于目录选择
-	 * 该方法主要用于让用户输入一个目录路径，并通过提供的验证函数进行校验
-	 *
-	 * @param parentComponent 父组件，用于确定文本输入框的位置
-	 * @param value 输入框的初始文本内容，通常为上次保存的目录路径
-	 * @param path 与输入框绑定的配置项路径，用于保存选择的目录路径
-	 * @param onInput 目录路径的验证函数，用于校验输入的路径是否有效
-	 *
-	 * @return 返回一个配置好并绑定了事件的文本输入框，用于接收用户输入的目录路径
-	 *
-	 * @see JFileChooser#DIRECTORIES_ONLY 仅显示目录的文件选择器模式
-	 */
-	public static JTextField chooseDirInput(Component parentComponent, String value, String path, Predicate<String> onInput) {
-	    // 创建文本输入框并设置初始文本内容
-	    JTextField tf = new JTextField(value);
-	    // 绑定文本输入框到配置项路径，并设置目录路径验证函数，禁用普通文件选择，仅允许目录
-	    return bind(tf, path, onInput, null, JFileChooser.DIRECTORIES_ONLY);
-	}
-	
-	
-	/**
-	 * 绑定一个文件路径选择器到给定的JTextField
-	 * 该方法允许用户通过点击文本框来选择文件或目录，并根据提供的过滤器和模式设置文本框的值
-	 *
-	 * @param tf 要绑定的JTextField
-	 * @param path 默认文件路径
-	 * @param onInput 输入验证回调，用于在文件路径设置到文本框之前进行检查
-	 * @param filter 文件过滤器，用于限制可以选择的文件类型
-	 * @param mode 打开模式，决定用户能选择的是文件还是目录
-	 * @return 返回绑定后的JTextField
-	 */
-	public static JTextField bind(JTextField tf, String path, Predicate<String> onInput, FileFilter filter, int mode) {
-	    // 添加鼠标事件监听器，主要处理文件选择操作
-	    tf.addMouseListener(new MouseListener() {
-	        // 以下方法留空，因为在这个场景中不需要这些具体的鼠标事件处理逻辑
-	        @Override
-	        public void mouseReleased(MouseEvent e) {
-	        }
-	        @Override
-	        public void mousePressed(MouseEvent e) {
-	        }
-	        @Override
-	        public void mouseExited(MouseEvent e) {
-	        }
-	        @Override
-	        public void mouseEntered(MouseEvent e) {
-	        }
 
-	        // 当用户点击文本框时，触发文件选择对话框
+	/**
+	 * 创建一个不可编辑的文本输入框，用于选择文件或目录
+	 * 该方法允许用户通过图形界面选择文件或目录，并在文本输入框中显示选择的路径
+	 *
+	 * @param path 初始路径，用于定位文件选择对话框的初始位置
+	 * @param display 一个函数，用于处理显示在文本输入框中的文本如果为null，则使用默认处理
+	 * @param filter 文件过滤器，用于在文件选择对话框中过滤文件和目录
+	 * @param mode 文件选择模式，决定用户能够选择的是文件还是目录,比如:JFileChooser.DIRECTORIES_ONLY
+	 * @param onSelected 当用户选择文件或目录时的回调函数
+	 * @return 返回一个配置好的文本输入框，用于显示选择的文件或目录路径
+	 */
+	public static JTextField chooseFileInput(String path, Function<String, String> display, FileFilter filter, int mode, Consumer<String> onSelected) {
+	    // 如果未提供显示处理函数，则使用默认函数，即直接返回路径
+	    if (display == null) {
+	        display = p -> p;
+	    }
+	    // 创建文本输入框并设置初始文本内容
+	    JTextField tf = new JTextField(display.apply(path));
+	    // 设置文本输入框为不可编辑，以确保用户不能直接输入文本
+	    tf.setEditable(false);
+
+	    // 自定义外观，使其看起来像一个按钮
+	    tf.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+	    tf.setBackground(Color.LIGHT_GRAY);
+	    tf.setHorizontalAlignment(JTextField.CENTER);
+
+		// 隐藏光标
+		tf.setCaretColor(tf.getBackground()); // 将光标颜色设置为背景色
+		tf.getCaret().setVisible(false); // 设置光标不可见
+
+	    // 添加鼠标监听器以处理点击、鼠标移入和移出事件
+	    Function<String, String> finalDisplay = display;
+	    tf.addMouseListener(new MouseAdapter() {
 	        @Override
 	        public void mouseClicked(MouseEvent e) {
-	            // 根据文本框当前内容或默认路径打开文件选择对话框
-	            File file = FilePicker.choose(tf.getText().trim().isEmpty()?path:tf.getText().trim(), filter, mode);
-	            if(file != null) {
-	                String path = file.getAbsolutePath();
+	            // 根据文本框当前内容或默认路径打开文件选择对话框，只显示目录
+	            File file = FilePicker.choose(tf.getText().trim().isEmpty() ? path : tf.getText().trim(), filter, mode);
+	            if (file != null) {
+	                String selectedPath = file.getAbsolutePath();
 	                // 如果选择的是目录，则在路径后添加分隔符
-	                if(file.isDirectory()) {
-	                    path+="\\";
+	                if (file.isDirectory()) {
+	                    selectedPath += "\\";
 	                }
-	                // 如果输入验证通过，设置文本框的值为选中的文件或目录的路径
-	                if(onInput.test(path)) {
-	                    tf.setText(path);
+	                // 更新文本框内容为新的目录路径，并调用回调函数（如果提供）
+	                tf.setText(finalDisplay.apply(selectedPath));
+	                if (onSelected != null) {
+	                    onSelected.accept(selectedPath);
 	                }
 	            }
 	        }
-	    });
 
-	    // 添加键盘事件监听器，阻止文本框的键盘输入
-	    tf.addKeyListener(new KeyListener() {
-	        // 以下方法中e.consume()用于阻止默认的键盘事件处理
 	        @Override
-	        public void keyTyped(KeyEvent e) {
-	            e.consume();
+	        public void mouseEntered(MouseEvent e) {
+	            // 鼠标进入文本框时改变背景颜色和文字颜色，以提供视觉反馈
+	            tf.setBackground(Color.DARK_GRAY);
+	            tf.setForeground(Color.WHITE);
+				// 隐藏光标
+				tf.setCaretColor(tf.getBackground());
 	        }
+
 	        @Override
-	        public void keyReleased(KeyEvent e) {
-	            e.consume();
-	        }
-	        @Override
-	        public void keyPressed(KeyEvent e) {
-	            e.consume();
+	        public void mouseExited(MouseEvent e) {
+	            // 鼠标离开文本框时恢复原来的背景颜色和文字颜色
+	            tf.setBackground(Color.LIGHT_GRAY);
+	            tf.setForeground(Color.BLACK);
+				// 隐藏光标
+				tf.setCaretColor(tf.getBackground());
 	        }
 	    });
-
-	    // 返回绑定后的文本框
 	    return tf;
 	}
+
 }
