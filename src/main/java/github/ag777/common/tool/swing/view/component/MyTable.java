@@ -171,7 +171,6 @@ public class MyTable extends JTable {
      * @param rowData 行数据数组
      */
     public void newRow(Object[] rowData) {
-        stopCellEditing();
         // 使用dm的addRow方法添加新行
         dm.addRow(rowData);
     }
@@ -182,7 +181,6 @@ public class MyTable extends JTable {
      * @param rowData 行数据数组
      */
     public void insertRow(int row, Object[] rowData) {
-        stopCellEditing();
         dm.insertRow(row, rowData);
     }
 
@@ -192,7 +190,6 @@ public class MyTable extends JTable {
      * @param row 要删除的行的索引
      */
     public void removeRow(int row) {
-        stopCellEditing();
         dm.removeRow(row);
     }
 
@@ -201,7 +198,6 @@ public class MyTable extends JTable {
      * 此方法通过清除数据向量中的内容并通知表格数据已更改来实现清空
      */
     public void clear() {
-        stopCellEditing();
         dm.getDataVector().clear();
         dm.fireTableDataChanged();
     }
@@ -236,7 +232,7 @@ public class MyTable extends JTable {
      * 停止当前的单元格编辑
      * 此方法通过TableUtils停止任何正在进行的单元格编辑
      */
-    private void stopCellEditing() {
+    public void stopCellEditing() {
         TableUtils.stopCellEditing(this);
     }
 }
