@@ -71,6 +71,34 @@ public class TableUtils {
 
 
     /**
+     * 从表格中读取指定行的数据
+     *
+     * @param table 表格对象，通过它来访问数据模型
+     * @param rowNo 要读取的数据行编号，从0开始
+     * @return 返回一个包含指定行各列数据的列表
+     * @throws IllegalArgumentException 如果指定的行号超过表格总行数，则抛出异常
+     */
+    public static List<Object> readRowDataFromTable(JTable table, int rowNo) throws IllegalArgumentException {
+        // 获取表格的数据模型
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        // 检查指定的行号是否超过总行数，如果超过则抛出异常
+        if (rowNo >= model.getRowCount()) {
+            throw new IllegalArgumentException("超过总行数:" + rowNo + "/" + model.getRowCount());
+        }
+        // 获取列数
+        int columnCount = model.getColumnCount();
+        // 初始化列表，用于存储一行的数据
+        List<Object> rowData = new ArrayList<>(columnCount);
+        // 遍历每一列，获取并添加到列表中
+        for (int i = 0; i < columnCount; i++) {
+            Object val = model.getValueAt(rowNo, i);
+            rowData.add(val);
+        }
+        // 返回包含一行数据的列表
+        return rowData;
+    }
+
+    /**
      * 向JTable中添加一个新列
      *
      * @param table 表格对象，新列将被添加到该表格中

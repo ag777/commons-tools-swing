@@ -3,15 +3,13 @@ package github.ag777.common.tool.swing.view.component;
 import github.ag777.common.tool.swing.util.ui.TableUtils;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.List;
 import java.util.Vector;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 
 public class MyTable extends JTable {
@@ -48,6 +46,58 @@ public class MyTable extends JTable {
      */
     public List<List<Object>> getAllData() {
         return TableUtils.readAllDataFromTable(this);
+    }
+
+    /**
+     * 根据行号获取表格中的行数据
+     *
+     * 此方法用于请求表格中特定行的所有数据，通过调用 TableUtils 类中的 readRowDataFromTable 方法
+     * 来实现从表格中读取并返回指定行的数据
+     *
+     * @param rowNo 表格中目标行的行号如果 rowNo 不合法（例如负数或超出表格行范围），
+     *          将抛出 IllegalArgumentException 异常
+     * @return 返回包含指定行所有数据的 List 对象
+     * @throws IllegalArgumentException 如果 rowNo 参数不合法，则抛出此异常
+     */
+    public List<Object> getRowData(int rowNo) throws IllegalArgumentException {
+        return TableUtils.readRowDataFromTable(this, rowNo);
+    }
+
+    /**
+     * 为所有单元格设置居中对齐
+     *
+     * 此方法通过使用CenteredCellRenderer对象来为表格中的所有单元格设置居中对齐
+     * 它覆盖了表格的默认渲染器，使得所有单元格内容默认居中对齐
+     *
+     * @return 返回MyTable实例，支持链式调用
+     */
+    public MyTable setCenterAlignmentForAllCells() {
+        return alignCells((row, column)->SwingConstants.CENTER);
+    }
+
+    /**
+     * 为表格中的单元格设置对齐方式
+     * 该方法通过提供一个双函数参数，允许根据行和列动态确定单元格的对齐方式
+     *
+     * @param getAlign 一个双函数，接受行和列作为参数，并返回一个整数值以指定单元格的对齐方式
+     *                 正数表示右对齐，0表示中心对齐，负数表示左对齐
+     * @return 返回当前的MyTable对象，允许链式调用
+     */
+    public MyTable alignCells(BiFunction<Integer, Integer, Integer> getAlign) {
+        // 设置默认的单元格渲染器
+        super.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                // 调用父类方法来获取渲染组件
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                // 设置水平对齐
+                setHorizontalAlignment(getAlign.apply(row, column));
+                // 设置垂直居中
+                setVerticalAlignment(SwingConstants.CENTER);
+                return this;
+            }
+        });
+        return this;
     }
 
     /**
