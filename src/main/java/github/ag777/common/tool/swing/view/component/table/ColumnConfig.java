@@ -18,6 +18,9 @@ public class ColumnConfig<T> {
     // 表示表格列的标题
     private String title;
 
+    // 列宽度
+    private Integer width;
+
     // 用于获取指定行和列的单元格值的函数接口
     private Function<T, Object> valGetter;
 

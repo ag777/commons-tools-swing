@@ -23,6 +23,11 @@ public class CustomTable<T> extends JTable {
     public CustomTable(List<ColumnConfig<T>> configs) {
         this.model = new CustomTableModel<>(configs);
         setModel(model);
+        columnWidths(
+                configs.stream()
+                        .mapToInt(c->c.width()!=null?c.width():-1)
+                        .toArray()
+        );
     }
 
     public CustomTable<T> setData(List<T> list) {
