@@ -3,6 +3,7 @@ package github.ag777.common.tool.swing.view.component.table;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.util.function.BiConsumer;
@@ -21,6 +22,9 @@ public class ColumnConfig<T> {
     // 列宽度
     private Integer width;
 
+    // 水平对齐方式
+    private int alignHorizontal= SwingConstants.CENTER;
+
     // 用于获取指定行和列的单元格值的函数接口
     private Function<T, Object> valGetter;
 
@@ -32,4 +36,14 @@ public class ColumnConfig<T> {
 
     // 用于编辑表格单元格的自定义组件
     private TableCellEditor cellEditor;
+
+    public ColumnConfig<T> alignLeft() {
+        alignHorizontal = SwingConstants.LEFT;
+        return this;
+    }
+
+    public ColumnConfig<T> alignRight() {
+        alignHorizontal = SwingConstants.RIGHT;
+        return this;
+    }
 }

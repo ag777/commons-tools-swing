@@ -7,8 +7,10 @@ import github.ag777.common.tool.swing.view.component.table.CustomTableModel;
 import lombok.Getter;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -67,7 +69,21 @@ public class CustomTable<T> extends JTable {
     @Override
     public TableCellRenderer getCellRenderer(int row, int column) {
         TableCellRenderer renderer = model.getCellRenderer(column);
-        return renderer != null ? renderer : super.getCellRenderer(row, column);
+        if (renderer == null) {
+            renderer = new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                    // 调用父类方法来获取渲染组件
+                    super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    // 设置水平对齐
+                    setHorizontalAlignment(model.getAlignHorizontal(column));
+                    // 设置垂直居中
+                    setVerticalAlignment(SwingConstants.CENTER);
+                    return this;
+                }
+            };
+        }
+        return renderer;
     }
 
     @Override

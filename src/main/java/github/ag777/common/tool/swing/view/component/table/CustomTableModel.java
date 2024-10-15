@@ -96,4 +96,8 @@ public class CustomTableModel<T> extends AbstractTableModel {
     public TableCellEditor getCellEditor(int columnIndex) {
         return columnConfigs.get(columnIndex).cellEditor();
     }
+
+    public int getAlignHorizontal(int columnIndex) {
+        return columnConfigs.get(columnIndex).alignHorizontal();
+    }
 }
