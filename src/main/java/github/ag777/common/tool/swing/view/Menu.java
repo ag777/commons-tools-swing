@@ -16,10 +16,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serial;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 public class Menu extends JMenuBar implements ActionListener {
@@ -48,7 +46,7 @@ public class Menu extends JMenuBar implements ActionListener {
 		super();
 		this.viewBasePackage = viewBasePackage;
 		mContainer = mainFrame;
-		menuItemConfigMap = new HashMap<>(config.getItems().size());
+		menuItemConfigMap = new LinkedHashMap<>(config.getItems().size());
 
 		initView(config.getUiConfig(), config.getItems());
 		

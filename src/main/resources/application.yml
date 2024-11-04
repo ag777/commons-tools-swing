@@ -12,8 +12,8 @@ ui:
       text-size: 14
   menu:
     items:
-      - name: 空
-        path: EmptyPanel
+      - name: 标签页
+        path: TabPanel
 
 logging:
   level:

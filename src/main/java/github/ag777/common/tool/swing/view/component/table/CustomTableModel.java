@@ -7,8 +7,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * @author ag777 <837915770@vip.qq.com>
@@ -56,11 +55,11 @@ public class CustomTableModel<T> extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         T item = list.get(rowIndex);
-        Function<T, Object> getter = columnConfigs.get(columnIndex).valGetter();
+        BiFunction<T, Integer, Object> getter = columnConfigs.get(columnIndex).valGetter();
         if (getter == null) {
             return null;
         }
-        return getter.apply(item);
+        return getter.apply(item, rowIndex);
     }
 
     @Override
@@ -71,9 +70,9 @@ public class CustomTableModel<T> extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         // 根据需求实现设置值的方法
-        BiConsumer<T, Object> valSetter = columnConfigs.get(columnIndex).valSetter();
+        ColumnConfig.ValSetter<T> valSetter = columnConfigs.get(columnIndex).valSetter();
         if (valSetter != null) {
-            valSetter.accept(list.get(rowIndex), aValue);
+            valSetter.apply(list.get(rowIndex), aValue, list, rowIndex, columnIndex);
         }
 
     }

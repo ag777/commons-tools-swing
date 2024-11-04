@@ -32,7 +32,16 @@ public class CustomTable<T> extends JTable {
         );
     }
 
+    public CustomTable(List<T> list, List<ColumnConfig<T>> configs) {
+        this(configs);
+        setData(list);
+    }
+
     public CustomTable<T> setData(List<T> list) {
+        return setList(list);
+    }
+
+    public CustomTable<T> setList(List<T> list) {
         model.setData(list);
         return this;
     }
