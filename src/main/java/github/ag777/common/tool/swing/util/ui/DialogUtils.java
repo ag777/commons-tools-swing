@@ -106,7 +106,7 @@ public class DialogUtils {
 	 * @param content 对话框的内容面板
 	 * @param size 对话框的尺寸，包括宽度和高度
 	 */
-	public static void showDialog(JFrame parentComponent, String title, JPanel content, Dimension size) {
+	public static JDialog showDialog(JFrame parentComponent, String title, Component content, Dimension size) {
 	    // 创建一个模态对话框，模态意味着用户必须关闭此对话框才能与父组件交互
 	    JDialog jd = new JDialog(parentComponent, title, true);
 
@@ -124,5 +124,6 @@ public class DialogUtils {
 
 	    // 将对话框显示在屏幕中央
 	    ViewUtils.showInCenter(jd);
+		return jd;
 	}
 }
