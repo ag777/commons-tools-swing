@@ -8,6 +8,7 @@ import javax.swing.table.TableCellRenderer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 /**
  * @author ag777 <837915770@vip.qq.com>
@@ -98,5 +99,21 @@ public class CustomTableModel<T> extends AbstractTableModel {
 
     public int getAlignHorizontal(int columnIndex) {
         return columnConfigs.get(columnIndex).alignHorizontal();
+    }
+
+    public void removeRow(int rowNo) {
+        list.remove(rowNo);
+        fireTableRowsDeleted(rowNo, rowNo);
+    }
+
+    public void removeRowIf(Predicate<? super T> filter) {
+        list.removeIf(filter);
+        fireTableDataChanged();
+    }
+
+    public void addRow(T row) {
+        int rowCount = list.size();
+        list.add(row);
+        fireTableRowsInserted(rowCount, rowCount);
     }
 }

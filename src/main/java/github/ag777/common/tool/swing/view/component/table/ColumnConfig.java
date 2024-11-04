@@ -1,11 +1,13 @@
 package github.ag777.common.tool.swing.view.component.table;
 
+import github.ag777.common.tool.swing.util.ui.table.MyCellEditor;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -68,6 +70,17 @@ public class ColumnConfig<T> {
         return this;
     }
 
+    public ColumnConfig<T> cellRenderAndEditor(ButtonCell cell) {
+        cellRenderer = (table, value, isSelected, hasFocus, row, column) -> cell.getComponent(table, value, isSelected, hasFocus, row, column, false);
+        cellEditor = new MyCellEditor() {
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+                return cell.getComponent(table, value, isSelected, null, row, column, true);
+            }
+        };
+        return this;
+    }
+
     @FunctionalInterface
     public interface ValSetter<T> {
         Object apply(T rowItem, Object val, List<T> list, int rowIndex, int colIndex);
@@ -81,5 +94,10 @@ public class ColumnConfig<T> {
         default Object apply(T rowItem, Object val, List<T> list, int rowIndex, int colIndex) {
             return apply(rowItem, val);
         }
+    }
+
+    @FunctionalInterface
+    public interface ButtonCell {
+        Component getComponent(JTable table, Object value, boolean isSelected, Boolean hasFocus, int row, int column, boolean isEditor);
     }
 }

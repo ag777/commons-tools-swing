@@ -175,12 +175,13 @@ public class TableUtils {
 
        // 设置列宽度
        for (int i = 0; i < numColumns; i++) {
+           int column = table.convertColumnIndexToView(i);
            if (specifiedWidths[i] == -1) {
                // 对于需要自动调整宽度的列，设置其首选宽度为计算得到的autoWidth
-               columnModel.getColumn(i).setPreferredWidth(autoWidth);
+               columnModel.getColumn(column).setPreferredWidth(autoWidth);
            } else {
                // 对于有指定宽度的列，设置其首选宽度为指定的宽度
-               columnModel.getColumn(i).setPreferredWidth(specifiedWidths[i]);
+               columnModel.getColumn(column).setPreferredWidth(specifiedWidths[i]);
            }
        }
    }
