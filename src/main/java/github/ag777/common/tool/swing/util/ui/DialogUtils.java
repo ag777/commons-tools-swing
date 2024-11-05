@@ -2,6 +2,8 @@ package github.ag777.common.tool.swing.util.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -97,9 +99,9 @@ public class DialogUtils {
 	    // 将对话框显示在屏幕中央
 	    ViewUtils.showInCenter(jd);
 	}
-	
+
 	/**
-	 * 显示一个带有标题和自定义内容的模态对话框
+	 * 显示一个带有标题和自定义内容的模态对话框(不阻塞调用线程)
 	 *
 	 * @param parentComponent 对话框的父组件，用于继承其样式和位置
 	 * @param title 对话框的标题，将显示在标题栏上
@@ -107,8 +109,48 @@ public class DialogUtils {
 	 * @param size 对话框的尺寸，包括宽度和高度
 	 */
 	public static JDialog showDialog(JFrame parentComponent, String title, Component content, Dimension size) {
+		return showDialog(parentComponent, title, content, size, false);
+	}
+
+	/**
+	 * 显示一个带有标题和自定义内容的模态对话框(不阻塞调用线程)
+	 *
+	 * @param parentComponent 对话框的父组件，用于继承其样式和位置
+	 * @param title 对话框的标题，将显示在标题栏上
+	 * @param content 对话框的内容面板
+	 * @param size 对话框的尺寸，包括宽度和高度
+	 * @param onClosed 在关闭时执行
+	 */
+	public static JDialog showDialog(JFrame parentComponent, String title, Component content, Dimension size, Consumer<JDialog> onClosed) {
+		return showDialog(parentComponent, title, content, size, onClosed,false);
+	}
+
+	/**
+	 * 显示一个带有标题和自定义内容的模态对话框
+	 *
+	 * @param parentComponent 对话框的父组件，用于继承其样式和位置
+	 * @param title 对话框的标题，将显示在标题栏上
+	 * @param content 对话框的内容面板
+	 * @param size 对话框的尺寸，包括宽度和高度
+	 * @param modal 模态窗状态启动的弹窗会阻塞调用线程，反之不会
+	 */
+	public static JDialog showDialog(JFrame parentComponent, String title, Component content, Dimension size, boolean modal) {
+		return showDialog(parentComponent, title, content, size, null,false);
+	}
+
+	/**
+	 * 显示一个带有标题和自定义内容的模态对话框
+	 *
+	 * @param parentComponent 对话框的父组件，用于继承其样式和位置
+	 * @param title 对话框的标题，将显示在标题栏上
+	 * @param content 对话框的内容面板
+	 * @param size 对话框的尺寸，包括宽度和高度
+	 * @param onClosed 在关闭时执行
+	 * @param modal 模态窗状态启动的弹窗会阻塞调用线程，反之不会
+	 */
+	public static JDialog showDialog(JFrame parentComponent, String title, Component content, Dimension size, Consumer<JDialog> onClosed, boolean modal) {
 	    // 创建一个模态对话框，模态意味着用户必须关闭此对话框才能与父组件交互
-	    JDialog jd = new JDialog(parentComponent, title, true);
+	    JDialog jd = new JDialog(parentComponent, title, modal);
 
 	    // 获取对话框的内容面板
 	    Container c = jd.getContentPane();
@@ -121,6 +163,15 @@ public class DialogUtils {
 
 	    // 设置对话框的尺寸
 	    jd.setSize(size);
+
+		if (onClosed != null) {
+			jd.addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosing(WindowEvent e) {
+					onClosed.accept(jd);
+				}
+			});
+		}
 
 	    // 将对话框显示在屏幕中央
 	    ViewUtils.showInCenter(jd);
