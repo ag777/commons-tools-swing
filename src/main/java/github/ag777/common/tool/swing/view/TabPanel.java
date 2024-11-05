@@ -49,7 +49,7 @@ public class TabPanel extends BasePanel implements TabView {
                                                         .valGetter((item, i) -> item)
                                                         .valSetter((rowItem, item, list, row, col) -> list.set(row, (String) item))
                                                         .alignLeft()
-                                                        .cellEditor(new DefaultCellEditor(new JTextField())),
+                                                        .cellEditorDefault(),
                                                 new ColumnConfig<String>()
                                                         .title("操作")
                                                         .width(220)
