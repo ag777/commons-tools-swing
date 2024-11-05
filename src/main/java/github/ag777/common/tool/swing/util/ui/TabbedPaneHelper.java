@@ -2,6 +2,7 @@ package github.ag777.common.tool.swing.util.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Consumer;
 
 /**
  * 标签页组件JTabbedPane辅助类
@@ -61,6 +62,18 @@ public class TabbedPaneHelper {
      */
     public TabbedPaneHelper addTab(String title, Icon icon, Component component) {
         mTabbedPane.addTab(title, icon, component);
+        return this;
+    }
+
+    /**
+     * 添加标签切换监听
+     * @param onChanged 标签切换监听
+     * @return 返回当前TabbedPaneHelper实例，以便进行链式调用
+     */
+    public TabbedPaneHelper onTabChanged(Consumer<Integer> onChanged) {
+        mTabbedPane.addChangeListener(e->{
+            onChanged.accept(mTabbedPane.getSelectedIndex());
+        });
         return this;
     }
 
