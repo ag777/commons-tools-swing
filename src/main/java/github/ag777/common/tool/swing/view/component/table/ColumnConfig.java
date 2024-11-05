@@ -81,6 +81,11 @@ public class ColumnConfig<T> {
         return this;
     }
 
+    public ColumnConfig<T> cellEditorDefault() {
+        cellEditor = new DefaultCellEditor(new JTextField());
+        return this;
+    }
+
     @FunctionalInterface
     public interface ValSetter<T> {
         Object apply(T rowItem, Object val, List<T> list, int rowIndex, int colIndex);

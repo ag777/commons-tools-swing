@@ -21,16 +21,10 @@ import java.util.function.Predicate;
  */
 public class CustomTable<T> extends JTable {
     @Getter
-    private final CustomTableModel<T> model;
+    private CustomTableModel<T> model;
 
     public CustomTable(List<ColumnConfig<T>> configs) {
-        this.model = new CustomTableModel<>(configs);
-        setModel(model);
-        columnWidths(
-                configs.stream()
-                        .mapToInt(c->c.width()!=null?c.width():-1)
-                        .toArray()
-        );
+        setConfig(configs);
     }
 
     public CustomTable(List<T> list, List<ColumnConfig<T>> configs) {
@@ -44,6 +38,28 @@ public class CustomTable<T> extends JTable {
 
     public CustomTable<T> setList(List<T> list) {
         model.setData(list);
+        return this;
+    }
+
+    public CustomTable<T> setConfig(List<ColumnConfig<T>> configs) {
+        this.model = new CustomTableModel<>(configs);
+        setModel(model);
+        columnWidths(
+                configs.stream()
+                        .mapToInt(c->c.width()!=null?c.width():-1)
+                        .toArray()
+        );
+        return this;
+    }
+
+    public CustomTable<T> setConfig(List<ColumnConfig<T>> configs, List<T> list) {
+        this.model = new CustomTableModel<>(list, configs);
+        setModel(model);
+        columnWidths(
+                configs.stream()
+                        .mapToInt(c->c.width()!=null?c.width():-1)
+                        .toArray()
+        );
         return this;
     }
 
