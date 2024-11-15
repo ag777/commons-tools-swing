@@ -1,5 +1,6 @@
 package github.ag777.common.tool.swing.view.component.table;
 
+import com.ag777.util.lang.collection.ListUtils;
 import lombok.Getter;
 
 import javax.swing.table.AbstractTableModel;
@@ -55,7 +56,7 @@ public class CustomTableModel<T> extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        T item = list.get(rowIndex);
+        T item = ListUtils.get(list, rowIndex);
         BiFunction<T, Integer, Object> getter = columnConfigs.get(columnIndex).valGetter();
         if (getter == null) {
             return null;
@@ -73,7 +74,7 @@ public class CustomTableModel<T> extends AbstractTableModel {
         // 根据需求实现设置值的方法
         ColumnConfig.ValSetter<T> valSetter = columnConfigs.get(columnIndex).valSetter();
         if (valSetter != null) {
-            valSetter.apply(list.get(rowIndex), aValue, list, rowIndex, columnIndex);
+            valSetter.apply(ListUtils.get(list, rowIndex), aValue, list, rowIndex, columnIndex);
         }
 
     }
