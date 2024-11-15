@@ -1,5 +1,7 @@
 package github.ag777.common.tool.swing.view.component;
 
+import com.ag777.util.lang.collection.ListUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
@@ -91,6 +93,9 @@ public class MyComboBox<E> extends JComboBox<E> {
      * @return 返回当前组合框实例，支持链式调用
      */
     public MyComboBox<E> addItems(Collection<E> items) {
+        if (ListUtils.isEmpty(items)) {
+            return this;
+        }
         for (E item : items) {
             addItem(item);
         }
