@@ -2,7 +2,7 @@ package github.ag777.common.tool.swing.view.component.loading;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author ag777 <837915770@vip.qq.com>
@@ -12,11 +12,11 @@ public class LoadingComponent<T extends Container> extends JLayeredPane {
 
     protected final T component;
     private final LoadingPanel loadingPanel;
-    private final AtomicBoolean isLoading;
+    private final AtomicInteger loadingCount;
 
     public LoadingComponent(T component) {
         this.component = component;
-        isLoading = new AtomicBoolean(false)
+        loadingCount = new AtomicInteger(0);
         loadingPanel = new LoadingPanel();
         setLayout(new OverlayLayout(this));
         // 将普通组件添加到底层
@@ -27,11 +27,19 @@ public class LoadingComponent<T extends Container> extends JLayeredPane {
 
 
     public boolean isLoading() {
-        return isLoading.get();
+        return loadingCount.get() != 0;
     }
 
     public void setLoading(boolean loading) {
-        isLoading.set(loading);
-        SwingUtilities.invokeLater(()-> loadingPanel.setVisible(loading));
+        if (loading) {
+            loadingCount.incrementAndGet();
+            SwingUtilities.invokeLater(()-> loadingPanel.setVisible(true));
+        } else {
+            int count = loadingCount.decrementAndGet();
+            if (count == 0) {
+                SwingUtilities.invokeLater(()-> loadingPanel.setVisible(false));
+            }
+        }
+
     }
 }
