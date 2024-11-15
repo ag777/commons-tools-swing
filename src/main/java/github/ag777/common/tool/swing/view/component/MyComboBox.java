@@ -80,7 +80,7 @@ public class MyComboBox<E> extends JComboBox<E> {
      * @return 返回当前的MyComboBox实例，支持链式调用
      */
     public MyComboBox<E> onSelected(Consumer<E> onSelected) {
-        addActionListener(e-> onSelected.accept((E) getSelectedItem()));
+        addActionListener(e-> onSelected.accept(getSelectedItem()));
         return this;
     }
 
@@ -131,5 +131,18 @@ public class MyComboBox<E> extends JComboBox<E> {
         setSelectedIndex(index);
         return this;
     }
+
+    /**
+     * 获取当前选择的元素
+     * 此方法用于从组件中获取用户当前选择的项
+     * 它封装了对getSelectedItem方法的调用，并确保返回值是泛型E的实例
+     *
+     * @return E 当前选择的元素，其类型为E
+     * @see #getSelectedItem()
+     */
+    public E getSelectedItem() {
+        return (E) super.getSelectedItem();
+    }
+
 
 }
