@@ -1,6 +1,7 @@
 package github.ag777.common.tool.swing.base;
 
 
+import github.ag777.common.tool.swing.model.Threads;
 import github.ag777.common.tool.swing.model.UiProperties;
 import github.ag777.common.tool.swing.util.ui.DialogUtils;
 import github.ag777.common.tool.swing.util.ui.Toast;
@@ -74,23 +75,26 @@ public abstract class BasePanel extends LoadingComponent<JPanel> {
 	    if(mPresenter != null) {
 	        // 设置正在加载状态为true，表示开始进行某种操作
 	        setLoading(true);
-	        try {
-	            // 执行传入的业务演示层方法
-	            action.call();
-	        } catch(InterruptedException e) {
-	            // 当方法执行被中断时，记录日志并执行取消回调
-	            log.debug("业务被中断");
-	            if (onCancel != null) {
-	                onCancel.accept(e);
-	            }
-	        } catch (Exception e) {
-	            // 捕获其他异常，记录异常信息并显示错误
-	            log.debug(e.getMessage(), e);
-	            showErr(e.getMessage());
-	        } finally {
-	            // 无论结果如何，最后确保将加载状态设置为false
-	            setLoading(false);
-	        }
+			Threads.getBackgroundPool().execute(()->{
+				try {
+					// 执行传入的业务演示层方法
+					action.call();
+				} catch(InterruptedException e) {
+					// 当方法执行被中断时，记录日志并执行取消回调
+					log.debug("业务被中断");
+					if (onCancel != null) {
+						onCancel.accept(e);
+					}
+				} catch (Exception e) {
+					// 捕获其他异常，记录异常信息并显示错误
+					log.debug(e.getMessage(), e);
+					showErr(e.getMessage());
+				} finally {
+					// 无论结果如何，最后确保将加载状态设置为false
+					setLoading(false);
+				}
+			});
+
 	    }
 	}
 

@@ -38,6 +38,6 @@ public class LoadingFrame extends JFrame {
     }
 
     public void setLoading(boolean loading) {
-        loadingPanel.setVisible(loading);
+        SwingUtilities.invokeLater(()-> loadingPanel.setVisible(loading));
     }
 }
