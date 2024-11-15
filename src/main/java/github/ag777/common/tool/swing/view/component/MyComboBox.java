@@ -36,7 +36,7 @@ public class MyComboBox<E> extends JComboBox<E> {
      * @param renderer 实现了ItemStrRender接口的渲染器，用于设置每个列表项的显示文本
      * @return 返回当前的MyComboBox实例，支持链式调用
      */
-    public MyComboBox<E> itemRenderer(ItemStrRender<E> renderer) {
+    public MyComboBox<E> itemStrRenderer(Function<E, String> renderer) {
         // 设置自定义的列表单元格渲染器
         setRenderer(new DefaultListCellRenderer() {
             @Override
@@ -132,8 +132,4 @@ public class MyComboBox<E> extends JComboBox<E> {
         return this;
     }
 
-    @FunctionalInterface
-    public interface ItemStrRender<E> extends Function<E, String> {
-        String apply(E item);
-    }
 }
