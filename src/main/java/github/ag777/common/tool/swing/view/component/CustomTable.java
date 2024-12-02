@@ -23,24 +23,67 @@ public class CustomTable<T> extends JTable {
     @Getter
     private CustomTableModel<T> model;
 
+    /**
+     * 使用指定的列配置创建表格
+     *
+     * @param configs 列配置列表，定义表格的列结构和行为
+     */
     public CustomTable(List<ColumnConfig<T>> configs) {
         setConfig(configs);
     }
 
+    /**
+     * 使用指定的数据和列配置创建表格
+     *
+     * @param list 初始数据列表
+     * @param configs 列配置列表，定义表格的列结构和行为
+     */
     public CustomTable(List<T> list, List<ColumnConfig<T>> configs) {
         this(configs);
         setData(list);
     }
 
+    /**
+     * 设置表格数据，会强制结束当前的编辑状态
+     * 
+     * @param list 要设置的数据列表
+     * @return 返回当前表格实例，支持链式调用
+     */
     public CustomTable<T> setData(List<T> list) {
+        prepareForUpdate(true);
         return setList(list);
     }
 
+    /**
+     * 设置表格数据，可以控制是否结束当前的编辑状态
+     * 
+     * @param list 要设置的数据列表
+     * @param endEditing 是否结束编辑状态。true: 强制结束编辑状态; false: 仅在非编辑状态时结束编辑
+     * @return 返回当前表格实例，支持链式调用
+     */
+    public CustomTable<T> setData(List<T> list, boolean endEditing) {
+        prepareForUpdate(endEditing);
+        return setList(list);
+    }
+
+    /**
+     * 设置表格数据的内部方法
+     * 注意：此方法不会处理编辑状态，请使用 setData 方法来设置数据
+     *
+     * @param list 要设置的数据列表
+     * @return 返回当前表格实例，支持链式调用
+     */
     public CustomTable<T> setList(List<T> list) {
         model.setData(list);
         return this;
     }
 
+    /**
+     * 设置表格的列配置
+     *
+     * @param configs 列配置列表，定义表格的列结构和行为
+     * @return 返回当前表格实例，支持链式调用
+     */
     public CustomTable<T> setConfig(List<ColumnConfig<T>> configs) {
         this.model = new CustomTableModel<>(configs);
         setModel(model);
@@ -52,6 +95,13 @@ public class CustomTable<T> extends JTable {
         return this;
     }
 
+    /**
+     * 设置表格的列配置和数据
+     *
+     * @param configs 列配置列表，定义表格的列结构和行为
+     * @param list 要设置的数据列表
+     * @return 返回当前表格实例，支持链式调用
+     */
     public CustomTable<T> setConfig(List<ColumnConfig<T>> configs, List<T> list) {
         this.model = new CustomTableModel<>(list, configs);
         setModel(model);
@@ -95,10 +145,22 @@ public class CustomTable<T> extends JTable {
     }
 
     /**
-     * 通知所有监听器，表格数据已更改
+     * 通知所有监听器，表格数据已更改，会强制结束当前的编辑状态
      * 此方法通常在多处数据发生变化时调用，以重新计算并显示所有数据
      */
     public void fireTableDataChanged() {
+        prepareForUpdate(true);
+        model.fireTableDataChanged();
+    }
+
+    /**
+     * 通知所有监听器，表格数据已更改，可以控制是否结束当前的编辑状态
+     * 此方法通常在多处数据发生变化时调用，以重新计算并显示所有数据
+     * 
+     * @param endEditing 是否结束编辑状态。true: 强制结束编辑状态; false: 仅在非编辑状态时结束编辑
+     */
+    public void fireTableDataChanged(boolean endEditing) {
+        prepareForUpdate(endEditing);
         model.fireTableDataChanged();
     }
 
@@ -224,6 +286,26 @@ public class CustomTable<T> extends JTable {
         return ListUtils.get(model.getList(), rowNo);
     }
 
+    /**
+     * 获取表格的自定义数据模型
+     *
+     * @return 返回表格的数据模型
+     */
+    public CustomTableModel<T> getModel() {
+        return model;
+    }
+
+    /**
+     * 获取指定单元格的渲染器
+     * 如果模型中没有为该列指定渲染器，将返回一个默认的渲染器，该渲染器具有以下特性：
+     * 1. 根据列配置设置水平对齐方式
+     * 2. 垂直居中对齐
+     * 3. 支持选中和焦点状态的显示
+     *
+     * @param row 行索引
+     * @param column 列索引
+     * @return 返回用于渲染单元格的TableCellRenderer实例
+     */
     @Override
     public TableCellRenderer getCellRenderer(int row, int column) {
         column = convertColumnIndexToModel(column);
@@ -245,10 +327,31 @@ public class CustomTable<T> extends JTable {
         return renderer;
     }
 
+    /**
+     * 获取指定单元格的编辑器
+     * 如果模型中没有为该列指定编辑器，将使用父类的默认编辑器
+     *
+     * @param row 行索引
+     * @param column 列索引
+     * @return 返回用于编辑单元格的TableCellEditor实例，如果没有指定则返回默认编辑器
+     */
     @Override
     public TableCellEditor getCellEditor(int row, int column) {
         column = convertColumnIndexToModel(column);
         TableCellEditor editor = model.getCellEditor(column);
         return editor != null ? editor : super.getCellEditor(row, column);
+    }
+
+    /**
+     * 在更新表格数据前调用此方法，确保结束所有编辑状态
+     * 
+     * @param force 是否强制结束编辑状态。
+     *             true: 强制结束编辑状态;
+     *             false: 仅在非编辑状态时结束编辑，避免打断用户的编辑操作
+     */
+    private void prepareForUpdate(boolean force) {
+        if (force || !isEditing()) {
+            TableUtils.stopCellEditing(this);
+        }
     }
 }
